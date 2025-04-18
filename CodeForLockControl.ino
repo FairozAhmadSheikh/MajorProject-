@@ -1,62 +1,25 @@
 #include <Adafruit_Fingerprint.h>
-#include <SoftwareSerial.h>
 
-#define RX_PIN 2
-#define TX_PIN 3
-#define SOLENOID_PIN 4
-
-SoftwareSerial mySerial(RX_PIN, TX_PIN);
-
+SoftwareSerial mySerial(2, 3);
 Adafruit_Fingerprint finger = Adafruit_Fingerprint(&mySerial);
 
-void setup() {
-  Serial.begin(9600);
-  mySerial.begin(57600);
+#define RELAY_PIN       4
+#define ACCESS_DELAY    3000 // Keep lock unlocked for 3 seconds 
 
-  pinMode(SOLENOID_PIN, OUTPUT);
-  digitalWrite(SOLENOID_PIN, LOW);
 
-  if (!finger.begin()) {
-    Serial.println("Couldn't find fingerprint sensor :(");
-    while (1);
+void setup()
+{
+  // set the data rate for the sensor serial port
+  finger.begin(57600);
+  delay(5);
+  if (finger.verifyPassword()) 
+  {
+  } 
+  else 
+  {
+    while (1) { delay(1); }
   }
-
-  if (finger.verifyPassword()) {
-    Serial.println("Found fingerprint sensor!");
-  } else {
-    Serial.println("Did not find fingerprint sensor :(");
-    while (1);
-  }
-}
-
-void loop() {
-  Serial.println("Place your finger on the sensor.");
-
-  if (finger.getImage() == FINGERPRINT_OK) {
-    Serial.println("Image taken");
-    delay(500);
-
-    int id = -1;
-
-    while (id == -1) {
-      id = finger.getImageFingerID();
-      delay(50);
-    }
-
-    Serial.print("Finger ID found: "); Serial.println(id);
-
-    if (finger.verifyPassword() && finger.verifyFingerID(id)) {
-      Serial.println("Fingerprint verified!");
-
-      // Activate the solenoid lock
-      digitalWrite(SOLENOID_PIN, HIGH);
-      delay(5000); // Keep the solenoid active for 5 seconds (you can adjust as needed)
-      digitalWrite(SOLENOID_PIN, LOW);
-
-    } else {
-      Serial.println("Fingerprint verification failed. Access denied.");
-    }
-  }
-
-  delay(1000); // Wait for a second before the next attempt
+  
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, HIGH);   //Switch off relay initially. Relay is LOW level triggered relay so we need to write HIGH.
 }
