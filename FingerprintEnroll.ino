@@ -46,3 +46,27 @@ uint8_t readnumber(void)
   }
   return num;
 }
+void loop() 
+{
+  Serial.println("\n\nReady to enroll a fingerprint!");
+  Serial.println("Please type in -1 to delete all the stored finger prints...");  
+  Serial.println("Please type in the ID # (from 1 to 127) you want to save the finger as...");
+  id = readnumber();
+  if (id == 0) // ID #0 not allowed, try again!
+  {
+     return;
+  }
+  if (id == uint8_t(-1))
+  {
+    Serial.print("Cleared all finger prints from database");
+    finger.emptyDatabase();
+    return;    
+  }
+
+  Serial.print("Enrolling ID #");
+  Serial.println(id);
+  while (!  getFingerprintEnroll() );
+}
+
+uint8_t getFingerprintEnroll() 
+{
