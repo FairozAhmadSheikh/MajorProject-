@@ -35,3 +35,14 @@ void setup()
   Serial.print(F("Baud rate: ")); Serial.println(finger.baud_rate);
   Serial.print(F("Total finger prints stored: ")); Serial.println(finger.templateCount);
 }
+uint8_t readnumber(void) 
+{
+  uint8_t num = 0;
+
+  while (num == 0) 
+  {
+    while (! Serial.available());
+    num = Serial.parseInt();
+  }
+  return num;
+}
