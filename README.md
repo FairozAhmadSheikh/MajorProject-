@@ -82,6 +82,54 @@ MajorProject-/
 6. All errors (scan error, communication error, processing error) are handled gracefully with user-friendly LCD messages.
 
 ---
+## 🔌 Circuit Connections
+
+| Fingerprint Sensor | Arduino |
+|---|---|
+| VCC | 5V |
+| GND | GND |
+| TX | Pin 2 (SoftwareSerial RX) |
+| RX | Pin 3 (SoftwareSerial TX) |
+
+| LCD (I2C) | Arduino |
+|---|---|
+| VCC | 5V |
+| GND | GND |
+| SDA | A4 |
+| SCL | A5 |
+
+| Relay Module | Arduino |
+|---|---|
+| IN | Pin 4 |
+| VCC | 5V |
+| GND | GND |
+
+> **Note:** The relay is active-LOW. `digitalWrite(Relay, LOW)` unlocks; `HIGH` locks.
+
+---
+
+## 📦 Dependencies
+
+Install the following libraries via Arduino Library Manager:
+
+- [`Adafruit_Fingerprint`](https://github.com/adafruit/Adafruit-Fingerprint-Sensor-Library) — Fingerprint sensor communication
+- [`LiquidCrystal_I2C`](https://github.com/johnrickman/LiquidCrystal_I2C) — I2C LCD control
+- `Wire` — Built-in Arduino I2C library
+- `SoftwareSerial` — Built-in Arduino serial library
+
+---
+
+## 🧠 Key Technical Concepts
+
+- **SoftwareSerial at 57600 baud** — high-speed serial communication with the fingerprint sensor over digital pins, freeing the hardware UART for debugging.
+- **Two-pass enrollment** — the sensor captures two images of the same finger, converts each to a Tz template, then merges them into a final model for higher accuracy matching.
+- **Relay active-LOW logic** — the relay defaults to HIGH (locked) on power-up, ensuring a fail-secure state if power is lost mid-operation.
+- **Non-blocking scan loop** — the main loop runs with a `delay(50)` throttle rather than full speed, balancing responsiveness with power efficiency.
+- **Comprehensive error handling** — every sensor return code (`FINGERPRINT_OK`, `FINGERPRINT_NOFINGER`, `FINGERPRINT_PACKETRECIEVEERR`, `FINGERPRINT_NOTFOUND`, etc.) is explicitly handled with appropriate user feedback.
+
+---
+
+
 
 
 
